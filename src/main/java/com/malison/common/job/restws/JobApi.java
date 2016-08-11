@@ -15,11 +15,14 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
@@ -102,7 +105,7 @@ public class JobApi {
 	@Path ("/createinvoice")
 	@Consumes (MediaType.APPLICATION_JSON)
 	@Produces ("application/pdf")
-	public Response acceptSelected(JSONArray selected) {
+	public Response acceptSelected(@Context HttpServletRequest request ,JSONArray selected) {
 		EntityManager em = emf.createEntityManager();
 		List<Job> job = new ArrayList<Job> ();
 		List<Long> jobs = new ArrayList<Long> ();
@@ -112,6 +115,8 @@ public class JobApi {
 		String invoiceNumber = invoice.getInvoiceNumber();
 		@SuppressWarnings("rawtypes")
 		ArrayList selectedjobs = (ArrayList) selected.get(1);
+		
+		HttpSession session = request.getSession(false);
 		try{
 			
 			for (int i = 0;i < selectedjobs.size();i++){
@@ -130,7 +135,7 @@ public class JobApi {
 			}
 			File file = null;
 			try {
-				file = InvPdf.generatepdf(job, invoice);
+				file = InvPdf.generatepdf(session, job, invoice);
 			} catch (Exception e) {
 				
 				e.printStackTrace();

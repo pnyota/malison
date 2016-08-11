@@ -7,11 +7,14 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
@@ -122,14 +125,14 @@ public class InvoiceApi {
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces("application/pdf")
-	public Response create(JSONArray selected) throws DocumentException, IOException{
+	public Response create(@Context HttpServletRequest request, JSONArray selected) throws DocumentException, IOException{
 		EntityManager em = emf.createEntityManager();
 		Invoice inv = em.find(Invoice.class, Long.parseLong(String.valueOf(selected.get(0))));
 		String invno = inv.getInvoiceNumber();
 		List<Job> jobs = em.createNamedQuery("Job.byInvoiceNo").setParameter("invno", invno).getResultList();
 		
-		
-			File file = InvPdf.generatepdf(jobs, inv);
+			HttpSession session = request.getSession(false);
+			File file = InvPdf.generatepdf(session, jobs, inv);
 		
 		//ResponseBuilder response = Response.ok((Object)x);
 		return Response.status(200).entity(file).build();

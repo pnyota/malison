@@ -6,7 +6,7 @@ invoice.controller ('InvoiceCtrl',['$scope','$http', '$window', function($scope,
 	$scope.selectedjobs = [];
 	$scope.company= "";
 	$scope.invoice = [];
-
+	$scope.currency = "shillings";
 	
 	function getjobs(){
 		$http.get("./api/jobapi/invoice").
@@ -48,20 +48,21 @@ invoice.controller ('InvoiceCtrl',['$scope','$http', '$window', function($scope,
 		 return $scope.selectedjobs.indexOf(id) >= 0;
 	};
 
-	function mergeInvoice(){
+	/*function mergeInvoice(){
 		$scope.invoice.push($scope.company);
 		$scope.invoice.push($scope.selectedjobs);
-	};
-	
+	};*/
+
 	
 	
 	$scope.createInvoice =function(){
-		mergeInvoice();
-		if($scope.selectedjobs.length != 0 && $scope.company.length != 0){
+		//mergeInvoice();
+		if($scope.selectedjobs.length != 0 && $scope.company.length != 0 && $scope.currency.length != 0){
+			var invoice = {company:$scope.company, currency:$scope.currency, selectedjobs:$scope.selectedjobs }
 		$http({
 			url: './api/jobapi/createinvoice',
 			method: 'POST',
-			data: JSON.stringify($scope.invoice),
+			data: JSON.stringify(invoice),
 			headers: {'Content-Type':'application/JSON'},
 			responseType: "arraybuffer"
 		}).success(function(data){

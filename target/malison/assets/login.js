@@ -1,7 +1,7 @@
 var login = angular.module('Login',['ngCookies']);
 
-login.controller('loginCtrl',['$scope', '$rootScope', '$location', 'AuthenticationService',
-    function($scope, $rootScope, $location, AuthenticationService) {
+login.controller('loginCtrl',['$scope', '$rootScope', '$window', 'AuthenticationService',
+    function($scope, $rootScope, $window, AuthenticationService) {
         // reset login status
         AuthenticationService.ClearCredentials();
   
@@ -10,27 +10,18 @@ login.controller('loginCtrl',['$scope', '$rootScope', '$location', 'Authenticati
             AuthenticationService.Login($scope.username, $scope.password, function(response) {
                 if(response.success) {
                     AuthenticationService.SetCredentials($scope.username, $scope.password);
-                    $location.path('/');
+                    $window.location.href='/malison/index.jsp';
                 } else {
                     $scope.error = response.message;
                     $scope.dataLoading = false;
+                    alert("Wrong Username and password,<br/> please try again...");
                 }
             });
         };
 	
 	
 
-/*	$scope.loginUser = function() {
-		$http({
-			url: './api/user/login',
-			method: 'POST',
-			data: Json.stringify($scope.user),
-			headers: {'Content-Type':'application/json'}
 
-		}).success(function(data){
-
-		});
-	};*/
 
 }]);
 

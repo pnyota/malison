@@ -1,13 +1,16 @@
- var job = angular.module('Job',[]);
-job.controller ('JobCtrl',['$scope','$http', function($scope, $http){
+ var job = angular.module('Job',['ngCookies']);
+job.controller ('JobCtrl',['$scope','$http','$cookieStore', '$window', function($scope, $http,$cookieStore,$window){
 
 $scope.job={};
 $scope.jobs=[];
 $scope.selectedjobs = [];
+var globals = $cookieStore.get('globals');
 
+$scope.user = globals.currentUser.username;
 
 $scope.showJobs = true;
 $scope.showJobDetails = false;
+$scope.currency ="Ksh";
 
 $scope.addJob =function(){
 	$http({
@@ -22,6 +25,21 @@ $scope.addJob =function(){
 	});
 
 };
+
+$scope.logout = function(){
+	$http.post('./api/user/logout',{username: $scope.user})
+		.success(function(response){
+            $window.location.href = '/malison/login.jsp';
+		});
+};
+/*$scope.user = {};
+            function getuserdetails(){
+                $http.get('/api/user/getuser')
+                .success(function(data){
+                    $scope.user = data;
+                    });
+            };
+$cookieStore.put('userDetails', $rootScope.user);*/
 
 function getjobs(){
 	$http.get("./api/jobapi/list").

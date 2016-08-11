@@ -4,7 +4,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URL;
 import java.util.List;
+
+import javax.servlet.http.HttpSession;
 
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
@@ -27,9 +30,11 @@ import com.malison.common.wordconverter.WordConverter;
 
 public class InvPdf {
 	//Creates a pdf
-		public static File generatepdf(List<Job> jobs, Invoice invoice) throws DocumentException, IOException{
+		public static File generatepdf(HttpSession session, List<Job> jobs, Invoice invoice) throws DocumentException, IOException{
 			
 			File file = null;
+			String name = ((String) session.getAttribute("name"));
+			name = name.toUpperCase();
 			
 			try {
 				file = File.createTempFile("invoice", ".pdf",null);
@@ -59,7 +64,7 @@ public class InvPdf {
 		        logo.setBorderColor(BaseColor.RED);
 				
 				
-				Image header = Image.getInstance("/home/fridah/Downloads/imageedit_1_3319949246.png"/*new URL(imageUrl)*/);
+				Image header = Image.getInstance(new URL("http://res.cloudinary.com/invision-itech/image/upload/v1470911337/malison_tiavfx.png"));
 		        header.disableBorderSide(0);
 		        header.setAlignment(Image.ALIGN_TOP);
 		        logo.addElement(header);
@@ -199,7 +204,7 @@ public class InvPdf {
 		        words.addElement(ph3);
 		        words.setVerticalAlignment(Rectangle.BOTTOM);
 		        words.setBorder(Rectangle.NO_BORDER);
-		        PdfPCell signed = new PdfPCell(new Phrase("Approved By:_________________________________________________________",bold));
+		        PdfPCell signed = new PdfPCell(new Phrase("Approved By: " + name,bold));
 		        signed.setVerticalAlignment(Rectangle.BOTTOM);
 		        signed.setBorder(Rectangle.NO_BORDER);
 		        

@@ -59,6 +59,10 @@ public class Job extends BaseEntity {
 	@Column(name ="PRODUCT")
 	private String Product;
 	
+	@FormParam("currency")
+	@Column(name="CURRENCY")
+	private String currency;
+	
 	
 	@Column (name = "INVOICED", columnDefinition="tinyint(1) default 0" )
 	private boolean invoiced;
@@ -173,6 +177,14 @@ public class Job extends BaseEntity {
 
 	public void setQtyLoaded(float qtyLoaded) {
 		QtyLoaded = qtyLoaded;
+	}
+
+	public String getCurrency() {
+		return currency;
+	}
+
+	public void setCurrency(String currency) {
+		this.currency = currency;
 	}
 	
 
