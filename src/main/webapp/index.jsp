@@ -58,7 +58,7 @@
               <li class="dropdown user user-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <img src="./assets/images/user.png" class="user-image" alt="User Image">
-              <span class="hidden-xs"><b>User:</b>{{user}}</span>
+              <span class="hidden-xs"><b>User:</b><%= session.getAttribute( "username" ) %></span>
             </a>
             <ul class="dropdown-menu">
               <!-- User image -->
@@ -88,7 +88,7 @@
               <!-- Menu Footer-->
               <li class="user-footer">
                 <div class="pull-left">
-                  <a href="#" class="btn btn-default btn-flat">Edit Profile</a>
+                  <a href="./profile.jsp" class="btn btn-default btn-flat">Edit Profile</a>
                 </div>
                 <div class="pull-right">
                   <a ng-click="logout()" class="btn btn-default btn-flat">Logout</a>
@@ -187,7 +187,7 @@
                             <option value="Ksh">Ksh</option>
                             <option value="US$">US$</option>
                           </select>
-                        </span>s
+                        </span>
                     <input type="text" class="form-control" placeholder="Amount" ng-model="job.amount">
                   </div>
                   <!-- /input-group -->
@@ -223,11 +223,30 @@
             <div class="col-xs-12">
               <div class="box">
                 <div class="box-body">
+                  <div id="example1_wrapper" class="dataTables_wrapper no-footer">
+                  <div id="example1_length" class="dataTables_length">
+                    <label>
+                    Show
+                    <select class="" name="example1_length" ng-model="pageSize" aria-controls="example1">
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                    </select>
+                    entries
+                    </label>
+                  </div>
+                  <div id="example1_filter" class="dataTables_filter">
+                    <label>
+                    Search:
+                    <input ng-model="search" type="search" placeholder="" aria-controls="example1">
+                    </label>
+                  </div>
                   <table id="example1" class="table table-bordered table-striped">
                     <tbody>
                       <thead>
                         <tr>
-                          <th>Selected</th>
+                          <th class="sorting" tabindex="0" aria-controls="example1" rowspan="1" colspan="1" style="width: 76.7667px;" aria-label="Selected: activate to sort column ascending">Selected</th>
                           <th>Job id</th>
                           <th>Invoice Number</th>
                           <th>Date</th>
@@ -256,11 +275,30 @@
                     </tbody>
                   </table>
                 </div>
+                </div>
+                <div class="col-sm-5">
+            <div id="example1_info" class="dataTables_info" role="status" aria-live="polite">Showing {{start}} to {{start+pageSize}} of {{jobs.length}} entries</div>
+            </div>
+            <div class="col-sm-7">
+            <div id="example1_paginate" class="dataTables_paginate paging_simple_numbers">
+              <ul class="pagination">
+                <li id="example1_previous" class="paginate_button previous disabled">
+                  <a href="#" aria-controls="example1" data-dt-idx="0" tabindex="0">Previous</a>
+                </li>
+                <li class="paginate_button " ng-repeat="page in currentPages">
+                  <a href="#" aria-controls="example1"  tabindex="0">{{index+1}}</a>
+                </li>
+                <li id="example1_next" class="paginate_button next">
+                  <a href="#" aria-controls="example1" data-dt-idx="7" tabindex="0">Next</a>
+                </li>
+              </ul>
+            </div>
+            </div>
                 <!-- /.box-body -->
               </div>
               <!-- /.box -->
             </div>
-            <!-- /.col -->
+            <!-- /.col -->         
           </div>
           <!-- /.row -->
         </section>
@@ -358,7 +396,6 @@
         <script src="./assets/job.js"></script>
         <script src="./assets/dist/js/demo.js"></script>
         <script src="./assets/dist/js/app.min.js"></script>
-
         <script src="./assets/bootstrap/js/bootstrap.min.js"></script>
   </body>
 

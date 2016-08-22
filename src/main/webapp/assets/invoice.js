@@ -6,7 +6,7 @@ invoice.controller ('InvoiceCtrl',['$scope','$http', '$window', function($scope,
 	$scope.selectedjobs = [];
 	$scope.company= "";
 	$scope.invoice = [];
-	$scope.currency = "shillings";
+	$scope.currency = "Ksh";
 	
 	function getjobs(){
 		$http.get("./api/jobapi/invoice").
@@ -62,7 +62,7 @@ invoice.controller ('InvoiceCtrl',['$scope','$http', '$window', function($scope,
 		$http({
 			url: './api/jobapi/createinvoice',
 			method: 'POST',
-			data: JSON.stringify(invoice),
+			data: JSON.stringify($scope.invoice),
 			headers: {'Content-Type':'application/JSON'},
 			responseType: "arraybuffer"
 		}).success(function(data){

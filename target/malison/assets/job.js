@@ -2,16 +2,16 @@
 job.controller ('JobCtrl',['$scope','$http','$cookieStore', '$window', function($scope, $http,$cookieStore,$window){
 
 $scope.job={};
+$scope.job.currency = "Ksh";
 $scope.jobs=[];
 $scope.selectedjobs = [];
-var globals = $cookieStore.get('globals');
-
-$scope.user = globals.currentUser.username;
 
 $scope.showJobs = true;
 $scope.showJobDetails = false;
-$scope.currency ="Ksh";
 
+$scope.pageSize = 10;
+$scope.search = "";
+$scope.currentPage = 0;
 $scope.addJob =function(){
 	$http({
 		url: './api/jobapi/create',
@@ -49,6 +49,10 @@ function getjobs(){
 };
 
 getjobs();
+
+$scope.numberOfPages=function(){
+        return Math.ceil($scope.jobs.length/$scope.pageSize);                
+    }
 
 
 	var updateSelected = function (action, id){
@@ -135,4 +139,10 @@ $scope.editJob =function(){
 
 
 
-}])
+}]);
+job.filter('startFrom', function() {
+    return function(input, start) {
+        start = +start; //parse to int
+        return input.slice(start);
+    }
+});

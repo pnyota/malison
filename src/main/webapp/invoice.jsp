@@ -50,7 +50,49 @@
 
 
       <div  class="navbar-custom-menu">
-        <!--enter some text here-->
+        <ul class="nav navbar-nav">
+              <li class="dropdown user user-menu">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <img src="./assets/images/user.png" class="user-image" alt="User Image">
+              <span class="hidden-xs"><b>User:</b><%= session.getAttribute( "username" ) %></span>
+            </a>
+            <ul class="dropdown-menu">
+              <!-- User image -->
+              <li class="user-header">
+                <img src="./assets/images/user.png" class="img-circle" alt="User Image">
+
+                <p>
+                  <%= session.getAttribute( "name" ) %>
+                  <small><%= session.getAttribute( "position" ) %></small>
+                </p>
+              </li>
+              <!--  
+              <li class="user-body">
+                <div class="row">
+                  <div class="col-xs-4 text-center">
+                    <a href="#">Followers</a>
+                  </div>
+                  <div class="col-xs-4 text-center">
+                    <a href="#">Sales</a>
+                  </div>
+                  <div class="col-xs-4 text-center">
+                    <a href="#">Friends</a>
+                  </div>
+                </div>
+                
+              </li> -->
+              <!-- Menu Footer-->
+              <li class="user-footer">
+                <div class="pull-left">
+                  <a href="./profile.jsp" class="btn btn-default btn-flat">Edit Profile</a>
+                </div>
+                <div class="pull-right">
+                  <a ng-click="logout()" class="btn btn-default btn-flat">Logout</a>
+                </div>
+              </li>
+            </ul>
+          </li>
+            </ul>
       </div>
     </nav>
   </header>
@@ -98,9 +140,9 @@
                   <input type="text" class="form-control" placeholder="Company Name" ng-model="company"><br/>
                   <label>Choose the Currency of the invoice</label><br/>
                   <label for="shillings">Kenyan Shillings</label>
-                  <input id="shillings"  type="radio" name="currency" ng-model="currency" value="shillings" checked><br/>
+                  <input id="shillings"  type="radio" name="currency" ng-model="currency" value="Ksh" checked><br/>
                    <label for="dollars">US Dollars</label>
-                  <input id="dollars" type="radio" name="currency" ng-model="currency" value="dollars"><br/>
+                  <input id="dollars" type="radio" name="currency" ng-model="currency" value="US$"><br/>
                   <button class="btn btn-success" ng-click="showhideCompany(false)">Done</button>
             </div>
     </section>
@@ -136,7 +178,7 @@
                     <th>Amount</th>
                   </tr>
                   </thead>                
-                  <tr ng-repeat = "jo in jobs">
+                  <tr ng-repeat = "jo in jobs | filter: currency as results">
                     <td><input type ="checkbox" ng-model= "jo.invoiced" ng-click="updateSelection($event, jo.id, jo.invoiced)" ng-checked="isSelected(jo.id)"></td>
                     <td>{{jo.id}}</td>
                     </input></td>
@@ -151,6 +193,7 @@
                   </tr>
               </tbody>              
              </table>
+             <p ng-if = "results.length= 0"><b>No {{currency}} Jobs.</b></p>
              <button class="btn btn-success" value= "save" ng-click="createInvoice()"> Create Invoice</button>
              </div>
             <!-- /.box-body -->
@@ -173,8 +216,9 @@
     reserved.
   </footer>
 </div>
-<!-- jQuery 2.2.0 -->
-<script src="./assets/plugins/jQuery/jQuery-2.2.0.min.js"></script>
+
+  <!-- jQuery 2.2.0 -->
+        <script src="./assets/plugins/jQuery/jQuery-2.2.0.min.js"></script>
         <!-- Bootstrap 3.3.6 -->
         <script src="./assets/bootstrap/js/bootstrap.min.js"></script>
         <!-- DataTables -->
@@ -190,9 +234,12 @@
         <script src="./assets/scripts/jquery-ui-1.10.1.custom.min.js" type="text/javascript"></script>
         <script src="./assets/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
         <script type="text/javascript" src="./assets/angular/angular-1.5.7/angular.min.js"></script>
+        <script type="text/javascript" src="./assets/angular/angular-1.5.7/angular-cookies.min.js"></script>
         <script src="./assets/invoice.js"></script>
         <script src="./assets/dist/js/demo.js"></script>
         <script src="./assets/dist/js/app.min.js"></script>
+
+        <script src="./assets/bootstrap/js/bootstrap.min.js"></script>
 
 
 

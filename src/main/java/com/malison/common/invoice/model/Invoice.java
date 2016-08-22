@@ -53,6 +53,9 @@ public class Invoice extends BaseEntity{
 	@Column(name ="DATE")
 	private	Date Date = new Date();
 	
+	@Column(name="CURRENCY")
+	private String currency;
+	
 	@Column (name = "NUMBER")
 	private String invoiceNumber;
 	
@@ -123,6 +126,14 @@ public class Invoice extends BaseEntity{
 
 	public void setDeleted(boolean deleted) {
 		this.deleted = deleted;
+	}
+
+	public String getCurrency() {
+		return currency;
+	}
+
+	public void setCurrency(String currency) {
+		this.currency = currency;
 	}
 	
 	

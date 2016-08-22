@@ -116,7 +116,18 @@ public class UserApi {
 		String name = user.getFirstName() + " " + user.getLastName();
 		String position = user.getPosition();
 		
+		session.setAttribute("username", username);
 		session.setAttribute("name", name);
 		session.setAttribute("position", position);
 		}
+	
+/*	@GET
+	@Path("/getdetails")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getUser(@Context HttpServletRequest request){
+		EntityManager em = emf.createEntityManager();
+		HttpSession session = request.getSession(false);
+		String username = session
+		
+	}*/
 }

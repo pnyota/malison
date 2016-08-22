@@ -3,7 +3,7 @@ package com.malison.common.job.restws;
 
 
 import org.json.simple.JSONArray;
-
+import org.json.simple.JSONObject;
 
 import java.io.File;
 
@@ -27,6 +27,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
+import org.apache.log4j.Logger;
 import org.jboss.resteasy.annotations.Form;
 
 
@@ -43,6 +44,8 @@ public class JobApi {
 	
 	@PersistenceUnit
 	private EntityManagerFactory emf;
+	
+	static Logger logger = Logger.getLogger(JobApi.class);
 
 	//saves new job to database
 	@POST
@@ -105,16 +108,15 @@ public class JobApi {
 	@Path ("/createinvoice")
 	@Consumes (MediaType.APPLICATION_JSON)
 	@Produces ("application/pdf")
-	public Response acceptSelected(@Context HttpServletRequest request ,JSONArray selected) {
+	public Response acceptSelected(@Context HttpServletRequest request ,JSONObject selected) {
 		EntityManager em = emf.createEntityManager();
 		List<Job> job = new ArrayList<Job> ();
 		List<Long> jobs = new ArrayList<Long> ();
-		String company = (String) selected.get(0);
+		String company = String.valueOf(selected.get("company"));
 		company = company.toUpperCase();
-		Invoice invoice = createInvoice(em, jobs, company);
-		String invoiceNumber = invoice.getInvoiceNumber();
 		@SuppressWarnings("rawtypes")
-		ArrayList selectedjobs = (ArrayList) selected.get(1);
+		ArrayList selectedjobs = (ArrayList) selected.get("selectedjobs");
+		String currency = String.valueOf(selected.get("currency"));
 		
 		HttpSession session = request.getSession(false);
 		try{
@@ -126,6 +128,8 @@ public class JobApi {
 				jobs.add(x);
 				
 			}
+			Invoice invoice = createInvoice(currency, em, jobs, company);
+			String invoiceNumber = invoice.getInvoiceNumber();
 			
 			for (int i = 0;i < job.size();i++){
 				em.getTransaction().begin();
@@ -191,7 +195,7 @@ public class JobApi {
 	}
 	
 	//Creates Invoice and generates invoice numbers
-	public Invoice createInvoice (EntityManager em, List<Long> jobs, String company ){
+	public Invoice createInvoice (String currency, EntityManager em, List<Long> jobs, String company ){
 		Invoice invoice = new Invoice();
 		
 		em.getTransaction().begin();
@@ -202,6 +206,7 @@ public class JobApi {
 		String invoiceNumber= String.format("%05d", x);
 		invoiceNumber = "MTL" + invoiceNumber;	
 		invoice.setInvoiceNumber(invoiceNumber);
+		invoice.setCurrency(currency);
 		invoice.setDate(Calendar.getInstance().getTime());
 		invoice.setCompany(company);
 		em.merge(invoice);

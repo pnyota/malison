@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -33,6 +34,7 @@ public class InvPdf {
 		public static File generatepdf(HttpSession session, List<Job> jobs, Invoice invoice) throws DocumentException, IOException{
 			
 			File file = null;
+			DecimalFormat df = new DecimalFormat("#,###.00");
 			String name = ((String) session.getAttribute("name"));
 			name = name.toUpperCase();
 			
@@ -147,7 +149,7 @@ public class InvPdf {
 		        tableheader.addCell(new Phrase ("PRODUCT",bold));
 		        tableheader.addCell(new Phrase ("QUANTITY\nLOADED",bold));
 		        tableheader.addCell(new Phrase ("RATE",bold));
-		        tableheader.addCell(new Phrase ("AMOUNT", bold));
+		        tableheader.addCell(new Phrase ("AMOUNT\n" + invoice.getCurrency(), bold));
 		        PdfPRow r = tableheader.getRow(0);
 		        for (PdfPCell c: r.getCells()){
 		        	c.setBackgroundColor(new BaseColor(195,201,201));
@@ -167,7 +169,7 @@ public class InvPdf {
 		        	table.addCell(String.valueOf(job.getProduct()));
 		        	table.addCell(String.valueOf(job.getQtyLoaded()));
 		        	table.addCell(String.valueOf(job.getRate()));
-		        	table.addCell(String.valueOf(job.getAmount()));
+		        	table.addCell(String.valueOf(df.format(job.getAmount())));
 		       total += job.getAmount();
 		        	
 		        }
@@ -183,21 +185,22 @@ public class InvPdf {
 		        document.add(table);
 		        
 		        PdfPTable totalAmount = new PdfPTable(2);
-		        float[] colwidths = {88.888889f,11.111111f};
+		        float[] colwidths = {80f,20f};
 		        totalAmount.setWidths(colwidths);
 		        PdfPCell totalcell= new PdfPCell(new Phrase("TOTAL: ",fortotal));
 		        totalcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 		        totalcell.setBorder(Rectangle.NO_BORDER);
 		        totalAmount.addCell(totalcell);
-		        PdfPCell amount= new PdfPCell(new Phrase(String.valueOf(total),fortotal));
+		        PdfPCell amount= new PdfPCell(new Phrase(invoice.getCurrency() + String.valueOf(df.format(total)),fortotal));
 		        amount.setBorder(Rectangle.NO_BORDER);
+		        
 		        totalAmount.addCell(amount);
 		        document.add(totalAmount);
 		        
 		        PdfPTable footer = new PdfPTable(1);
 		        PdfPCell words = new PdfPCell(); 
 		        Phrase AmountTitle = new Phrase("Amount in Words: ", bold);
-		        Phrase wordsAmount = new Phrase(WordConverter.convert(total).toUpperCase()+" SHILLINGS ONLY");
+		        Phrase wordsAmount = new Phrase(WordConverter.convert(total).toUpperCase()+ currency(invoice.getCurrency()));
 		        Paragraph ph3 = new Paragraph();
 		        ph3.add(AmountTitle);
 		        ph3.add(wordsAmount);
@@ -224,5 +227,13 @@ public class InvPdf {
 		        
 		      return file;
 		 
+		}
+		
+		public static String currency (String s){
+			
+			if(s.equals("Ksh"))
+				return " SHILLINGS ONLY";
+			else 
+				return " DOLLARS ONLY";
 		}
 }
