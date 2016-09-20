@@ -1,17 +1,18 @@
- var job = angular.module('Job',['ngCookies']);
-job.controller ('JobCtrl',['$scope','$http','$cookieStore', '$window', function($scope, $http,$cookieStore,$window){
+ var job = angular.module('Job',['ngCookies','angularUtils.directives.dirPagination']);
+job.controller ('JobCtrl',['$scope','$http','$cookieStore', '$window', function($scope, $http, $cookieStore,$window){
+
 
 $scope.job={};
 $scope.job.currency = "Ksh";
 $scope.jobs=[];
 $scope.selectedjobs = [];
 
+
 $scope.showJobs = true;
 $scope.showJobDetails = false;
+$scope.pageSize = 5 ;
 
-$scope.pageSize = 10;
-$scope.search = "";
-$scope.currentPage = 0;
+
 $scope.addJob =function(){
 	$http({
 		url: './api/jobapi/create',
@@ -25,6 +26,11 @@ $scope.addJob =function(){
 	});
 
 };
+
+ $scope.sort = function(keyname){
+        $scope.sortKey = keyname;   //set the sortKey to the param passed
+        $scope.reverse = !$scope.reverse; //if true make it false and vice versa
+    }
 
 $scope.logout = function(){
 	$http.post('./api/user/logout',{username: $scope.user})
@@ -49,10 +55,6 @@ function getjobs(){
 };
 
 getjobs();
-
-$scope.numberOfPages=function(){
-        return Math.ceil($scope.jobs.length/$scope.pageSize);                
-    }
 
 
 	var updateSelected = function (action, id){
@@ -140,9 +142,3 @@ $scope.editJob =function(){
 
 
 }]);
-job.filter('startFrom', function() {
-    return function(input, start) {
-        start = +start; //parse to int
-        return input.slice(start);
-    }
-});

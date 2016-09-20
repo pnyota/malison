@@ -7,7 +7,8 @@ invoice.controller ('InvoiceCtrl',['$scope','$http', '$window', function($scope,
 	$scope.company= "";
 	$scope.invoice = [];
 	$scope.currency = "Ksh";
-	
+	$scope.pageSize = 5;
+
 	function getjobs(){
 		$http.get("./api/jobapi/invoice").
 		success(function(data){
@@ -29,7 +30,10 @@ invoice.controller ('InvoiceCtrl',['$scope','$http', '$window', function($scope,
 		$scope.showAddCompany = status;
 		$scope.showAddJobs = !status; 
 	};
-
+	$scope.sort = function(keyname){
+        $scope.sortKey = keyname;   //set the sortKey to the param passed
+        $scope.reverse = !$scope.reverse; //if true make it false and vice versa
+    };
 	getjobs();
 	var updateSelected = function (action, id){
 		if (action === 'add' && $scope.selectedjobs.indexOf(id) === -1)

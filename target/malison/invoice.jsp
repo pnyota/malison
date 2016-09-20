@@ -66,7 +66,7 @@
                   <small><%= session.getAttribute( "position" ) %></small>
                 </p>
               </li>
-              <!--  
+              z<!--  
               <li class="user-body">
                 <div class="row">
                   <div class="col-xs-4 text-center">
@@ -162,26 +162,59 @@
         <div class="col-xs-12">
           <div class="box">
             <div class="box-body">
+              <div id="example1_length" class="dataTables_length">
+                      <label> Show <select class="" name="example1_length"
+                        ng-model="pageSize" aria-controls="example1">
+                          <option value="5">5</option>
+                          <option value="10">10</option>
+                          <option value="25">25</option>
+                          <option value="50">50</option>
+                          <option value="100">100</option>
+                      </select> entries
+                      </label>
+                    </div>
+                    <div id="example1_filter" class="dataTables_filter">
+                      <label> Search: <input ng-model="search"
+                        type="search" placeholder="" aria-controls="example1">
+                      </label>
+                    </div>
               <table id="example1" class="table table-bordered table-striped">
                 <tbody>
                   <thead>
                   <tr>
                     <th>Selected</th>
-                    <th>Job id</th>
-                    <th>Invoice Number</th>
-                    <th>Date</th>
-                    <th>Goods</th>
-                    <th>Loaded From</th>
-                    <th>Destination</th>
-                    <th>Vehicle</th>
-                    <th>Rate</th>
-                    <th>Amount</th>
+                    <th ng-click="sort('id')">Job id <span
+                            class="glyphicon sort-icon" ng-show="sortKey=='id'"
+                            ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span></th>
+                    <th ng-click="sort('invoiceNumber')">Invoice Number <span
+                            class="glyphicon sort-icon" ng-show="sortKey=='invoiceNumber'"
+                            ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span></th>
+                    <th ng-click="sort('date')">Date <span
+                            class="glyphicon sort-icon" ng-show="sortKey=='date'"
+                            ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span></th>
+                    <th ng-click="sort('product')">Goods <span
+                            class="glyphicon sort-icon" ng-show="sortKey=='product'"
+                            ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span></th>
+                    <th ng-click="sort('loadedFrom')">Loaded From <span
+                            class="glyphicon sort-icon" ng-show="sortKey=='loadedFrom'"
+                            ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span></th>
+                    <th ng-click="sort('destination')">Destination <span
+                            class="glyphicon sort-icon" ng-show="sortKey=='destination'"
+                            ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span></th>
+                    <th ng-click="sort('vehicleRegno')">Vehicle <span
+                            class="glyphicon sort-icon" ng-show="sortKey=='vehicle'"
+                            ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span></th>
+                    <th ng-click="sort('rate')">Rate <span
+                            class="glyphicon sort-icon" ng-show="sortKey=='rate'"
+                            ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span></th>
+                    <th ng-click="sort('amount')">Amount <span
+                            class="glyphicon sort-icon" ng-show="sortKey=='amount'"
+                            ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span></th>
                   </tr>
                   </thead>                
-                  <tr ng-repeat = "jo in jobs | filter: currency as results">
+                  <tr dir-paginate = "jo in jobs | filter: currency as results| orderBy:sortKey:reverse | itemsPerPage:pageSize">
                     <td><input type ="checkbox" ng-model= "jo.invoiced" ng-click="updateSelection($event, jo.id, jo.invoiced)" ng-checked="isSelected(jo.id)"></td>
                     <td>{{jo.id}}</td>
-                    </input></td>
                     <td>{{jo.invoiceNumber}}</td>
                     <td>{{jo.date}}</td>
                     <td>{{jo.product}}</td>
@@ -198,6 +231,14 @@
              </div>
             <!-- /.box-body -->
           </div>
+          <div class="col-sm-7">
+                  <div id="example1_paginate"
+                    class="dataTables_paginate paging_simple_numbers">
+                    <dir-pagination-controls max-size="5" direction-links="true"
+                      boundary-links="true"> 
+                    </dir-pagination-controls>
+                  </div>
+                </div>
           <!-- /.box -->
         </div>
         <!-- /.col -->
@@ -235,6 +276,7 @@
         <script src="./assets/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
         <script type="text/javascript" src="./assets/angular/angular-1.5.7/angular.min.js"></script>
         <script type="text/javascript" src="./assets/angular/angular-1.5.7/angular-cookies.min.js"></script>
+        <script type="text/javascript" src="./assets/angular/angular-1.5.7/dirPagination.js"></script>
         <script src="./assets/invoice.js"></script>
         <script src="./assets/dist/js/demo.js"></script>
         <script src="./assets/dist/js/app.min.js"></script>
