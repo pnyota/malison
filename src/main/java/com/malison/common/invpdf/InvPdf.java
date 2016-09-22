@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -59,8 +60,10 @@ public class InvPdf {
 		        Font normal = new Font(Font.FontFamily.HELVETICA, 14f, Font.NORMAL);
 		        Font fortotal = new Font(Font.FontFamily.HELVETICA, 16f, Font.BOLD);
 		        Font addressfont = new Font(Font.FontFamily.HELVETICA, 10f, Font.BOLD);
-				
 		        
+		        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+				String date = format.format(invoice.getDate());
+				
 		        PdfPTable tablelogo = new PdfPTable(1);
 				tablelogo.setWidthPercentage(100);
 				PdfPCell logo = new PdfPCell();
@@ -109,12 +112,12 @@ public class InvPdf {
 		        Phrase cName = new Phrase(String.valueOf(invoice.getCompany()), bold);
 		        Chunk to = new Chunk("M/s: ", normal);
 		        Chunk chunk2 = new Chunk ("DATE: ", normal);
-		        Phrase date = new Phrase (String.valueOf(invoice.getDate()), bold);
+		        Phrase pdate = new Phrase (date,bold);
 		        
 		        Phrase ph2 = new Phrase(chunk2);
 		        Paragraph phdate = new Paragraph();
 		        phdate.add(ph2);
-		        phdate.add(date);
+		        phdate.add(pdate);
 		        
 		        PdfPCell cell2 = new PdfPCell(phdate);
 		        cell2.setHorizontalAlignment(Element.ALIGN_RIGHT);
