@@ -50,11 +50,11 @@
         <div ng-show="userform.username.$error.required">Required</div>
         <div ng-show="usedName">Try another username</div>
       </div>
- <!--      <div class="form-group has-feedback" ng-class="{'has-error':!userform.position.$valid}">
+      <div class="form-group has-feedback" ng-class="{'has-error':!userform.position.$valid}">
         <input type="text" name="position" class="form-control" placeholder="Position" ng-model="user.position" required ="">
         <span class="glyphicon glyphicon-user form-control-feedback"></span>
         <div ng-show="userform.position.$error.required">Required</div>
-      </div> -->
+      </div> 
       <div class="form-group has-feedback" ng-class="{'has-error':!userform.password.$valid}">
         <input type="password" name="password" class="form-control" placeholder="Password" ng-model="user.password" required="">
         <span class="glyphicon glyphicon-lock form-control-feedback"></span>
