@@ -3,6 +3,7 @@ package com.malison.common.job.model;
 import com.malison.common.model.BaseEntity;
 import com.malison.common.model.DateAdapter;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -86,9 +87,10 @@ public class Job extends BaseEntity {
 	@Column(name ="RATE")
 	private int Rate;
 	
+	
 	@FormParam ("amount")
-	@Column(name ="AMOUNT")
-	private float Amount;
+	@Column(name ="AMOUNT", precision=15, scale=2)
+	private BigDecimal Amount;
 	
 
 	public String getVehicleRegno() {
@@ -147,11 +149,11 @@ public class Job extends BaseEntity {
 		Rate = rate;
 	}
 
-	public float getAmount() {
+	public BigDecimal getAmount() {
 		return Amount;
 	}
 
-	public void setAmount(float amount) {
+	public void setAmount(BigDecimal amount) {
 		Amount = amount;
 	}
 

@@ -210,9 +210,15 @@
                     <th ng-click="sort('amount')">Amount <span
                             class="glyphicon sort-icon" ng-show="sortKey=='amount'"
                             ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span></th>
+                    <th ng-click="sort('deliveryNo')">Note no. <span
+                       class="glyphicon sort-icon" ng-show="sortKey=='deliveryNo'"
+                       ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    </th>
+                    <th ng-click="sort('currency')">Currency <span class="glyphicon sort-icon" ng-show="sortKey=='currency'" ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                    </th>
                   </tr>
                   </thead>                
-                  <tr dir-paginate = "jo in jobs | filter: currency as results| orderBy:sortKey:reverse | itemsPerPage:pageSize">
+                  <tr dir-paginate="jo in jobs | orderBy:sortKey:reverse| filter:search| itemsPerPage:pageSize">
                     <td><input type ="checkbox" ng-model= "jo.invoiced" ng-click="updateSelection($event, jo.id, jo.invoiced)" ng-checked="isSelected(jo.id)"></td>
                     <td>{{jo.id}}</td>
                     <td>{{jo.invoiceNumber}}</td>
@@ -223,6 +229,8 @@
                     <td>{{jo.vehicleRegno}}</td>
                     <td>{{jo.rate}}</td>
                     <td>{{jo.amount}}</td>
+                    <td>{{jo.deliveryNo}}</td>
+                    <td>{{jo.currency}}</td>
                   </tr>
               </tbody>              
              </table>

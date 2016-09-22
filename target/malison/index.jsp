@@ -281,6 +281,14 @@ select {
 														class="glyphicon sort-icon" ng-show="sortKey=='amount'"
 														ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
 													</th>
+                          <th ng-click="sort('deliveryNo')">Note no. <span
+                            class="glyphicon sort-icon" ng-show="sortKey=='deliveryNo'"
+                            ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                          </th>
+                          <th ng-click="sort('currency')">Currency <span
+                            class="glyphicon sort-icon" ng-show="sortKey=='currency'"
+                            ng-class="{'glyphicon-chevron-up':reverse,'glyphicon-chevron-down':!reverse}"></span>
+                          </th>
 												</tr>
 											</thead>
 											<tr
@@ -297,6 +305,8 @@ select {
 												<td>{{jo.vehicleRegno}}</td>
 												<td>{{jo.rate}}</td>
 												<td>{{jo.amount}}</td>
+                        <td>{{jo.deliveryNo}}</td>
+                        <td>{{jo.currency}}</td>
 											</tr>
 											</tbody>
 										</table>

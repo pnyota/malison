@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.math.BigDecimal;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.List;
@@ -159,7 +160,7 @@ public class InvPdf {
 		        PdfPTable table = new PdfPTable(9);
 		        table.setWidthPercentage(90);
 		        table.getDefaultCell().setBorder(Rectangle.NO_BORDER);
-		       int total = 0;
+		       BigDecimal total = new BigDecimal(0.00);
 		        for (Job job: jobs){
 		        	table.addCell(String.valueOf(job.getDate()));
 		        	table.addCell(String.valueOf(job.getVehicleRegno()));
@@ -170,7 +171,7 @@ public class InvPdf {
 		        	table.addCell(String.valueOf(job.getQtyLoaded()));
 		        	table.addCell(String.valueOf(job.getRate()));
 		        	table.addCell(String.valueOf(df.format(job.getAmount())));
-		       total += job.getAmount();
+		       total = total.add(job.getAmount());
 		        	
 		        }
 
@@ -200,7 +201,7 @@ public class InvPdf {
 		        PdfPTable footer = new PdfPTable(1);
 		        PdfPCell words = new PdfPCell(); 
 		        Phrase AmountTitle = new Phrase("Amount in Words: ", bold);
-		        Phrase wordsAmount = new Phrase(WordConverter.convert(total).toUpperCase()+ currency(invoice.getCurrency()));
+		        Phrase wordsAmount = new Phrase(WordConverter.convert(total.intValue()).toUpperCase()+ currency(invoice.getCurrency()));
 		        Paragraph ph3 = new Paragraph();
 		        ph3.add(AmountTitle);
 		        ph3.add(wordsAmount);

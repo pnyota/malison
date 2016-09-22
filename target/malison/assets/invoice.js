@@ -1,4 +1,4 @@
-var invoice = angular.module('Invoice', []);
+var invoice = angular.module('Invoice', ['angularUtils.directives.dirPagination']);
 
 invoice.controller ('InvoiceCtrl',['$scope','$http', '$window', function($scope,$http,$window){
 	
