@@ -117,6 +117,8 @@ public class JobApi {
 		@SuppressWarnings("rawtypes")
 		ArrayList selectedjobs = (ArrayList) selected.get("selectedjobs");
 		String currency = String.valueOf(selected.get("currency"));
+		String tax = String.valueOf(selected.get("tax"));
+		String biller = String.valueOf(selected.get("biller"));
 		
 		HttpSession session = request.getSession(false);
 		try{
@@ -128,7 +130,7 @@ public class JobApi {
 				jobs.add(x);
 				
 			}
-			Invoice invoice = createInvoice(currency, em, jobs, company);
+			Invoice invoice = createInvoice(currency, em, jobs, company, biller, tax);
 			String invoiceNumber = invoice.getInvoiceNumber();
 			
 			for (int i = 0;i < job.size();i++){
@@ -146,6 +148,8 @@ public class JobApi {
 			}
 
 			ResponseBuilder response = Response.ok((Object) file);
+			response.header("Content-Disposition",
+					"attachment; filename=invoice.pdf");
 			return response.build();
 			
 		}
@@ -195,7 +199,7 @@ public class JobApi {
 	}
 	
 	//Creates Invoice and generates invoice numbers
-	public Invoice createInvoice (String currency, EntityManager em, List<Long> jobs, String company ){
+	public Invoice createInvoice (String currency, EntityManager em, List<Long> jobs, String company, String biller, String tax ){
 		Invoice invoice = new Invoice();
 		
 		em.getTransaction().begin();
@@ -209,6 +213,8 @@ public class JobApi {
 		invoice.setCurrency(currency);
 		invoice.setDate(Calendar.getInstance().getTime());
 		invoice.setCompany(company);
+		invoice.setBiller(biller);
+		invoice.setTax(tax);
 		em.merge(invoice);
 		em.getTransaction().commit();
 

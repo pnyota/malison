@@ -12,6 +12,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
+
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Document;
@@ -32,11 +34,13 @@ import com.malison.common.job.model.Job;
 import com.malison.common.wordconverter.WordConverter;
 
 public class InvPdf {
+	static Logger logger = Logger.getLogger(InvPdf.class);
 	//Creates a pdf
 		public static File generatepdf(HttpSession session, List<Job> jobs, Invoice invoice) throws DocumentException, IOException{
 			
 			File file = null;
 			DecimalFormat df = new DecimalFormat("#,###.00");
+			DecimalFormat df2 = new DecimalFormat("####.00");
 			String name = ((String) session.getAttribute("name"));
 			name = name.toUpperCase();
 			
@@ -69,9 +73,19 @@ public class InvPdf {
 				PdfPCell logo = new PdfPCell();
 		        logo.setBorderColor(BaseColor.RED);
 				
-				
-				Image header = Image.getInstance(new URL("http://res.cloudinary.com/invision-itech/image/upload/v1470911337/malison_tiavfx.png"));
-		        header.disableBorderSide(0);
+		        
+		        Image header = null;
+				if(invoice.getBiller().equals("agency")){
+					header = Image.getInstance(new URL("http://res.cloudinary.com/invision-itech/image/upload/v1475315014/agency_gj9s9d.png"));
+				}
+					
+				else if (invoice.getBiller().equals("limited")){
+					header = Image.getInstance(new URL("http://res.cloudinary.com/invision-itech/image/upload/v1470911337/malison_tiavfx.png"));
+				}
+				else{
+					logger.info("not agency nor limited");
+				}
+				header.disableBorderSide(0);
 		        header.setAlignment(Image.ALIGN_TOP);
 		        logo.addElement(header);
 		        tablelogo.addCell(logo);
@@ -188,15 +202,30 @@ public class InvPdf {
 				}
 		        document.add(table);
 		        
-		        PdfPTable totalAmount = new PdfPTable(2);
+		        double sum = total.doubleValue();
 		        float[] colwidths = {80f,20f};
-		        totalAmount.setWidths(colwidths);
-		        PdfPCell totalcell= new PdfPCell(new Phrase("TOTAL: ",fortotal));
-		        totalcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
-		        totalcell.setBorder(Rectangle.NO_BORDER);
-		        totalAmount.addCell(totalcell);
-		        PdfPCell amount= new PdfPCell(new Phrase(invoice.getCurrency() + String.valueOf(df.format(total)),fortotal));
-		        amount.setBorder(Rectangle.NO_BORDER);
+		        PdfPTable totalAmount = new PdfPTable(2);
+	        	totalAmount.setWidths(colwidths);
+		        
+		        if (invoice.getTax().equals("true")){
+		        	BigDecimal withoutTax = total;
+		        	sum = sum * 1.16;
+		        	total = BigDecimal.valueOf(sum);
+		        	PdfPCell vatcell= new PdfPCell(new Phrase("+16% VAT: "));
+		        	vatcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+			        vatcell.setBorder(Rectangle.NO_BORDER);
+			        PdfPCell vatamount= new PdfPCell(new Phrase(invoice.getCurrency() + String.valueOf(df.format(total.subtract(withoutTax)))));
+			        vatamount.setBorder(Rectangle.NO_BORDER);
+			        totalAmount.addCell(vatcell);
+			        totalAmount.addCell(vatamount);
+		        }        	
+			    PdfPCell totalcell= new PdfPCell(new Phrase("TOTAL: ",fortotal));
+			        
+			    totalcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
+			    totalcell.setBorder(Rectangle.NO_BORDER);
+			    totalAmount.addCell(totalcell);
+			    PdfPCell amount= new PdfPCell(new Phrase(invoice.getCurrency() + String.valueOf(df.format(total)),fortotal));
+			    amount.setBorder(Rectangle.NO_BORDER);
 		        
 		        totalAmount.addCell(amount);
 		        document.add(totalAmount);
@@ -204,7 +233,7 @@ public class InvPdf {
 		        PdfPTable footer = new PdfPTable(1);
 		        PdfPCell words = new PdfPCell(); 
 		        Phrase AmountTitle = new Phrase("Amount in Words: ", bold);
-		        Phrase wordsAmount = new Phrase(WordConverter.convert(total.intValue()).toUpperCase()+ currency(invoice.getCurrency()));
+		        Phrase wordsAmount = new Phrase( currency(invoice.getCurrency(), df2.format(total).toString()));
 		        Paragraph ph3 = new Paragraph();
 		        ph3.add(AmountTitle);
 		        ph3.add(wordsAmount);
@@ -233,11 +262,15 @@ public class InvPdf {
 		 
 		}
 		
-		public static String currency (String s){
+		public static String currency (String s, String amount){
+			String[] a = amount.split("\\.");
+			String full = a[0];
+			
+			String cents = a[1];
 			
 			if(s.equals("Ksh"))
-				return " SHILLINGS ONLY";
+				return WordConverter.convert(Integer.parseInt(full)).toUpperCase() + " SHILLINGS AND " + WordConverter.convert(Integer.parseInt(cents)).toUpperCase() + " CENTS";
 			else 
-				return " DOLLARS ONLY";
+				return WordConverter.convert(Integer.parseInt(full)).toUpperCase() + " DOLLARS AND " + WordConverter.convert(Integer.parseInt(cents)).toUpperCase() + " CENTS";
 		}
 }

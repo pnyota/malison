@@ -7,7 +7,9 @@ invoice.controller ('InvoiceCtrl',['$scope','$http', '$window', function($scope,
 	$scope.company= "";
 	$scope.invoice = [];
 	$scope.currency = "Ksh";
+	$scope.biller = "limited";
 	$scope.pageSize = 5;
+	$scope.tax = "true";
 
 	function getjobs(){
 		$http.get("./api/jobapi/invoice").
@@ -62,7 +64,7 @@ invoice.controller ('InvoiceCtrl',['$scope','$http', '$window', function($scope,
 	$scope.createInvoice =function(){
 		//mergeInvoice();
 		if($scope.selectedjobs.length != 0 && $scope.company.length != 0 && $scope.currency.length != 0){
-		$scope.invoice = {company:$scope.company, currency:$scope.currency, selectedjobs:$scope.selectedjobs }
+		$scope.invoice = {company:$scope.company, currency:$scope.currency, selectedjobs:$scope.selectedjobs, biller:$scope.biller, tax:$scope.tax}
 		$http({
 			url: './api/jobapi/createinvoice',
 			method: 'POST',

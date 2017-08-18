@@ -135,16 +135,34 @@
     <!-- Content Header (Page header) -->
     <div>
     <section class = "content" ng-show="showAddCompany" >
-           <div class="col-xs-5" >
-                  <label> Please Enter The Company name</label>
+           
+                <div class="callout callout-info">
+                  <label><h4>Please Enter The Company name</h4></label>
                   <input type="text" class="form-control" placeholder="Company Name" ng-model="company"><br/>
-                  <label>Choose the Currency of the invoice</label><br/>
+                  </div>
+                  <div class="callout callout-info">
+                  <label><h4>Choose the Currency</h4></label><br/>
                   <label for="shillings">Kenyan Shillings</label>
                   <input id="shillings"  type="radio" name="currency" ng-model="currency" value="Ksh" checked><br/>
                    <label for="dollars">US Dollars</label>
                   <input id="dollars" type="radio" name="currency" ng-model="currency" value="US$"><br/>
+                  </div>
+                  <div class="callout callout-info">
+                  <label><h4>Choose the Billing Company</h4> </label><br/>
+                  <label for="limited">Malison Transporters co. LTD</label>
+                  <input id="limited"  type="radio" name="biller" ng-model="biller" value="limited" checked><br/>
+                   <label for="agency">Malison Transport Agency</label>
+                  <input id="agency" type="radio" name="biller" ng-model="biller" value="agency"><br/>
+                  </div>
+                  <div class="callout callout-info">
+                  <label><h4>Is the Invoice Taxable?</h4></label><br/>
+                  <label for="yes">Yes</label>
+                  <input id="yes"  type="radio" name="tax" ng-model="tax" value ="true" checked><br/>
+                   <label for="agency">No</label>
+                  <input id="no" type="radio" name="tax" ng-model="tax" value="false"><br/>                    
+                  </div>
                   <button class="btn btn-success" ng-click="showhideCompany(false)">Done</button>
-            </div>
+            
     </section>
     </div>
 

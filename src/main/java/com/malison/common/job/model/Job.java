@@ -50,7 +50,7 @@ public class Job extends BaseEntity {
 
 	@FormParam ("qtyLoaded")
 	@Column(name ="QUANTITY")	
-	private float QtyLoaded;
+	private String QtyLoaded;
 	
 	@FormParam ("vehicleRegno")
 	@Column(name ="VEHICLE")
@@ -85,7 +85,7 @@ public class Job extends BaseEntity {
 	
 	@FormParam ("rate")
 	@Column(name ="RATE")
-	private int Rate;
+	private String Rate;
 	
 	
 	@FormParam ("amount")
@@ -141,11 +141,11 @@ public class Job extends BaseEntity {
 		InvoiceNumber = invoiceNumber;
 	}
 
-	public int getRate() {
+	public String getRate() {
 		return Rate;
 	}
 
-	public void setRate(int rate) {
+	public void setRate(String rate) {
 		Rate = rate;
 	}
 
@@ -173,11 +173,11 @@ public class Job extends BaseEntity {
 		DeliveryNo = deliveryNo;
 	}
 
-	public float getQtyLoaded() {
+	public String getQtyLoaded() {
 		return QtyLoaded;
 	}
 
-	public void setQtyLoaded(float qtyLoaded) {
+	public void setQtyLoaded(String qtyLoaded) {
 		QtyLoaded = qtyLoaded;
 	}
 

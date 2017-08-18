@@ -56,6 +56,12 @@ public class Invoice extends BaseEntity{
 	@Column(name="CURRENCY")
 	private String currency;
 	
+	@Column(name ="BILLER")
+	private String biller;
+	
+	@Column(name="TAX")
+	private String tax;
+	
 	@Column (name = "NUMBER")
 	private String invoiceNumber;
 	
@@ -134,6 +140,22 @@ public class Invoice extends BaseEntity{
 
 	public void setCurrency(String currency) {
 		this.currency = currency;
+	}
+
+	public String getBiller() {
+		return biller;
+	}
+
+	public void setBiller(String biller) {
+		this.biller = biller;
+	}
+
+	public String getTax() {
+		return tax;
+	}
+
+	public void setTax(String tax) {
+		this.tax = tax;
 	}
 	
 	
