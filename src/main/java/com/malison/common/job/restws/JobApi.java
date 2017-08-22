@@ -67,7 +67,7 @@ public class JobApi {
 			 response = "{\"success\":false, \"msg\":\"Error occured, please  try later\"}";
 			
 		}
-		em.close();
+		
 		return response;
 	}
 	
@@ -98,7 +98,7 @@ public class JobApi {
 		em.getTransaction().rollback();
 		response = "{\"success\":false, \"msg\":\"Error occured, please  try later\"}";
 	}
-		em.close();
+		
 		return response;
 		
 	}
@@ -184,6 +184,7 @@ public class JobApi {
 
 	private void persistDetails(List<InvoiceDetails> invoiceDetails, Invoice invoice) {
 		EntityManager em = emf.createEntityManager();
+		System.out.println("hapa Tunaanza kupersist details");
 		Invoice completeInvoice =(Invoice) em.createNamedQuery("Invoice.getByInvoiceNumber")
 				.setParameter("InvoiceNumber", invoice.getInvoiceNumber())
 				.getSingleResult();
@@ -193,7 +194,7 @@ public class JobApi {
 			em.persist(invoiceDetail);
 			em.getTransaction().commit();
 		}
-		em.close();
+		
 	
 	}
 
@@ -207,7 +208,7 @@ public class JobApi {
 		List<Job> job = em.createNamedQuery("Job.findall").getResultList();
 		JobWrapper wrapper = new JobWrapper();
 		wrapper.setJob(job);
-		em.close();
+		
 		return Response.status(200).entity(wrapper).build();
 		
 	}
@@ -222,7 +223,6 @@ public class JobApi {
 		List<Job> invoice = em.createNamedQuery("Job.finduninvoiced").getResultList();
 		JobWrapper wrapper = new JobWrapper();
 		wrapper.setJob(invoice);
-		em.close();
 		return Response.status(200).entity(wrapper).build();
 	}
 	
@@ -286,7 +286,7 @@ public class JobApi {
 		e.printStackTrace();
 		response =  "{\"success\":false, \"msg\":\"Error occured, please  try later\"}";
 		}
-		em.close();
+		
 		return response;
 	}
 	
@@ -299,7 +299,7 @@ public class JobApi {
 		EntityManager em = emf.createEntityManager();
 		
 		Job j = em.find(Job.class, Long.parseLong(String.valueOf(selected.get(0))));
-		em.close();
+		
 	return Response.status(200).entity(j).build();
 	}
 	
