@@ -174,7 +174,6 @@ public class JobApi {
 			
 		}
 		catch (Exception e){
-			em.getTransaction().rollback();
 			e.printStackTrace();
 			return Response.status(500).entity("{\"success\":false, \"msg\":\"Error occured, please  try later\"}").build();
 		}
