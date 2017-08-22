@@ -166,7 +166,7 @@ public class JobApi {
 				
 				e.printStackTrace();
 			}
-			em.close();
+			
 			ResponseBuilder response = Response.ok((Object) file);
 			response.header("Content-Disposition",
 					"attachment; filename=invoice.pdf");
@@ -238,7 +238,6 @@ public class JobApi {
 	//Creates Invoice and generates invoice numbers
 	public Invoice createInvoice (String currency, EntityManager em, List<Long> jobs, String company, String biller, String tax ){
 		Invoice invoice = new Invoice();
-		
 		em.getTransaction().begin();
 		invoice.setJobs(jobs);
 		long x = invoice.setCount(em);

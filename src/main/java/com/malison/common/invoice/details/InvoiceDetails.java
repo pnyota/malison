@@ -15,7 +15,7 @@ import com.malison.common.model.BaseEntity;
 @NamedQueries({
 	@NamedQuery(
 			name = "Details.getbyInvoice",
-			query = "d From InvoiceDetails d Where d.invoice.invoiceNumber= :invoiceNo"
+			query = "From InvoiceDetails d Where d.invoice.invoiceNumber= :invoiceNo"
 			)
 })
 @Entity
