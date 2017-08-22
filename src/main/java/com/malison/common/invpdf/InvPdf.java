@@ -29,6 +29,7 @@ import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPRow;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+import com.malison.common.invoice.details.InvoiceDetails;
 import com.malison.common.invoice.model.Invoice;
 import com.malison.common.job.model.Job;
 import com.malison.common.wordconverter.WordConverter;
@@ -36,7 +37,7 @@ import com.malison.common.wordconverter.WordConverter;
 public class InvPdf {
 	static Logger logger = Logger.getLogger(InvPdf.class);
 	//Creates a pdf
-		public static File generatepdf(HttpSession session, List<Job> jobs, Invoice invoice) throws DocumentException, IOException{
+		public static File generatepdf(HttpSession session, List<Job> jobs, Invoice invoice, List<InvoiceDetails> invoiceDetails) throws DocumentException, IOException{
 			
 			File file = null;
 			DecimalFormat df = new DecimalFormat("#,###.00");
@@ -190,6 +191,14 @@ public class InvPdf {
 		        	table.addCell(String.valueOf(df.format(job.getAmount())));
 		       total = total.add(job.getAmount());
 		        	
+		        }
+		        for (InvoiceDetails invoiceDetail: invoiceDetails){
+		        	PdfPCell invoiceDetailCell = new PdfPCell();
+		        	invoiceDetailCell.setColspan(8);
+		        	invoiceDetailCell.addElement(new Phrase(invoiceDetail.getParticular()));
+		        	table.addCell(invoiceDetailCell);
+		        	table.addCell(String.valueOf(df.format(invoiceDetail.getAmount())));
+		        	total = total.add(invoiceDetail.getAmount());
 		        }
 
 

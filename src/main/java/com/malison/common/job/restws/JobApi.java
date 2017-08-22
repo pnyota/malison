@@ -6,8 +6,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.io.File;
-
-
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -30,7 +29,7 @@ import javax.ws.rs.core.Response.ResponseBuilder;
 import org.apache.log4j.Logger;
 import org.jboss.resteasy.annotations.Form;
 
-
+import com.malison.common.invoice.details.InvoiceDetails;
 import com.malison.common.invoice.model.Invoice;
 import com.malison.common.invpdf.InvPdf;
 import com.malison.common.job.model.Job;
@@ -54,18 +53,22 @@ public class JobApi {
 	public String Create(@Form Job job){
 		
 		EntityManager em = emf.createEntityManager();
+		String response;
 		try{
 		em.getTransaction().begin();
 		em.merge(job);
-		em.getTransaction().commit();	
+		em.getTransaction().commit();		
+		response = "{\"success\":true, \"msg\": \"Saved successfully\"}";
+	
 		}
 		catch (Exception e){
 			em.getTransaction().rollback();
 			 e.printStackTrace();
-			 return "{\"success\":false, \"msg\":\"Error occured, please  try later\"}";
+			 response = "{\"success\":false, \"msg\":\"Error occured, please  try later\"}";
 			
 		}
-		return "{\"success\":true, \"msg\": \"Saved successfully\"}";
+		em.close();
+		return response;
 	}
 	
 	//Edits a Job
@@ -75,6 +78,7 @@ public class JobApi {
 	public String Edit (@Form Job job){
 		EntityManager em = emf.createEntityManager();
 		Job j = em.find(Job.class, job.getId());
+		String response;
 		try{
 			em.getTransaction().begin();
 			j.setAmount(job.getAmount());
@@ -88,12 +92,15 @@ public class JobApi {
 			j.setVehicleRegno(job.getVehicleRegno());
 			em.merge(j);
 			em.getTransaction().commit();
+			response =  "{\"success\":true, \"msg\": \"Saved successfully\"}";
 	}catch(Exception e){
 		e.printStackTrace();
 		em.getTransaction().rollback();
-		return "{\"success\":false, \"msg\":\"Error occured, please  try later\"}";
+		response = "{\"success\":false, \"msg\":\"Error occured, please  try later\"}";
 	}
-		return "{\"success\":true, \"msg\": \"Saved successfully\"}";
+		em.close();
+		return response;
+		
 	}
 	/*
 	 * parses JSON array containing jobs from the client company and currency
@@ -112,6 +119,7 @@ public class JobApi {
 		EntityManager em = emf.createEntityManager();
 		List<Job> job = new ArrayList<Job> ();
 		List<Long> jobs = new ArrayList<Long> ();
+		List<InvoiceDetails> invoiceDetails = new ArrayList<> ();
 		String company = String.valueOf(selected.get("company"));
 		company = company.toUpperCase();
 		@SuppressWarnings("rawtypes")
@@ -119,6 +127,8 @@ public class JobApi {
 		String currency = String.valueOf(selected.get("currency"));
 		String tax = String.valueOf(selected.get("tax"));
 		String biller = String.valueOf(selected.get("biller"));
+		@SuppressWarnings("unchecked")
+		List<JSONObject> details  = (ArrayList<JSONObject>) selected.get("details");
 		
 		HttpSession session = request.getSession(false);
 		try{
@@ -130,7 +140,17 @@ public class JobApi {
 				jobs.add(x);
 				
 			}
+			for(int i = 0; i < details.size(); i++ ){
+				JSONObject detail = details.get(i);
+				String particular = String.valueOf(detail.get("particular"));
+				BigDecimal amount = new BigDecimal(String.valueOf(detail.get("amount")));
+				InvoiceDetails invoiceDetail = new InvoiceDetails();
+				invoiceDetail.setParticular(particular);
+				invoiceDetail.setAmount(amount);
+				invoiceDetails.add(invoiceDetail);
+			}
 			Invoice invoice = createInvoice(currency, em, jobs, company, biller, tax);
+			persistDetails(invoiceDetails, invoice);
 			String invoiceNumber = invoice.getInvoiceNumber();
 			
 			for (int i = 0;i < job.size();i++){
@@ -141,12 +161,12 @@ public class JobApi {
 			}
 			File file = null;
 			try {
-				file = InvPdf.generatepdf(session, job, invoice);
+				file = InvPdf.generatepdf(session, job, invoice, invoiceDetails);
 			} catch (Exception e) {
 				
 				e.printStackTrace();
 			}
-
+			em.close();
 			ResponseBuilder response = Response.ok((Object) file);
 			response.header("Content-Disposition",
 					"attachment; filename=invoice.pdf");
@@ -162,6 +182,21 @@ public class JobApi {
 			
 	}
 
+	private void persistDetails(List<InvoiceDetails> invoiceDetails, Invoice invoice) {
+		EntityManager em = emf.createEntityManager();
+		Invoice completeInvoice =(Invoice) em.createNamedQuery("Invoice.getByInvoiceNumber")
+				.setParameter("InvoiceNumber", invoice.getInvoiceNumber())
+				.getSingleResult();
+		for (InvoiceDetails invoiceDetail: invoiceDetails ){
+			invoiceDetail.setInvoice(completeInvoice);
+			em.getTransaction().begin();
+			em.persist(invoiceDetail);
+			em.getTransaction().commit();
+		}
+		em.close();
+	
+	}
+
 	//Returns Job list
 	@SuppressWarnings("unchecked")
 	@Path ("/list")
@@ -172,6 +207,7 @@ public class JobApi {
 		List<Job> job = em.createNamedQuery("Job.findall").getResultList();
 		JobWrapper wrapper = new JobWrapper();
 		wrapper.setJob(job);
+		em.close();
 		return Response.status(200).entity(wrapper).build();
 		
 	}
@@ -186,6 +222,7 @@ public class JobApi {
 		List<Job> invoice = em.createNamedQuery("Job.finduninvoiced").getResultList();
 		JobWrapper wrapper = new JobWrapper();
 		wrapper.setJob(invoice);
+		em.close();
 		return Response.status(200).entity(wrapper).build();
 	}
 	
@@ -231,6 +268,7 @@ public class JobApi {
 	@Consumes(MediaType.APPLICATION_JSON)
 	public String deletejobs(JSONArray selected){
 		EntityManager em = emf.createEntityManager();
+		String response = new String();
 		try{
 		for(int i= 0; i < selected.size(); i++){
 			Job j = em.find(Job.class, Long.parseLong(String.valueOf(selected.get(i))));
@@ -238,17 +276,19 @@ public class JobApi {
 			em.getTransaction().begin();
 			em.remove(j);
 			em.getTransaction().commit();
+			response = "{\"success\":true, \"msg\": \"Saved successfully\"}";
 			}
 		else{
-				return "{\"success\":false, \"msg\":\"Cannot delete an invoiced job, delete its invoice first\"}";
+				response = "{\"success\":false, \"msg\":\"Cannot delete an invoiced job, delete its invoice first\"}";
 				}
 		}
 		}
 		catch (Exception e){
 		e.printStackTrace();
-		return "{\"success\":false, \"msg\":\"Error occured, please  try later\"}";
+		response =  "{\"success\":false, \"msg\":\"Error occured, please  try later\"}";
 		}
-		return "{\"success\":true, \"msg\": \"Saved successfully\"}";
+		em.close();
+		return response;
 	}
 	
 	//editJobs
@@ -260,7 +300,7 @@ public class JobApi {
 		EntityManager em = emf.createEntityManager();
 		
 		Job j = em.find(Job.class, Long.parseLong(String.valueOf(selected.get(0))));
-		
+		em.close();
 	return Response.status(200).entity(j).build();
 	}
 	

@@ -5,7 +5,7 @@ invoice.controller ('InvoiceCtrl',['$scope','$http', '$window', function($scope,
 	$scope.jobs=[];
 	$scope.selectedjobs = [];
 	$scope.company= "";
-	$scope.invoice = [];
+	$scope.invoice = {};
 	$scope.currency = "Ksh";
 	$scope.biller = "limited";
 	$scope.pageSize = 5;
@@ -63,8 +63,9 @@ invoice.controller ('InvoiceCtrl',['$scope','$http', '$window', function($scope,
 	
 	$scope.createInvoice =function(){
 		//mergeInvoice();
-		if($scope.selectedjobs.length != 0 && $scope.company.length != 0 && $scope.currency.length != 0){
-		$scope.invoice = {company:$scope.company, currency:$scope.currency, selectedjobs:$scope.selectedjobs, biller:$scope.biller, tax:$scope.tax}
+		if(true/*$scope.selectedjobs.length != 0 && $scope.company.length != 0 && $scope.currency.length != 0*/){
+		$scope.invoice = {company:$scope.company, currency:$scope.currency, selectedjobs:$scope.selectedjobs, biller:$scope.biller, tax:$scope.tax, details: $scope.details}
+		console.log($scope.invoice)
 		$http({
 			url: './api/jobapi/createinvoice',
 			method: 'POST',
@@ -81,11 +82,22 @@ invoice.controller ('InvoiceCtrl',['$scope','$http', '$window', function($scope,
 	}else {
 		$scope.selectedjobs = [];
 		$scope.company = "";
-		$scope.invoice = [];
+		$scope.invoice = {};
 		alert("you have not selected any jobs for the invoice,\n or You have not entered company name");
 	}
 		
 		};
+		$scope.detail = {};
+		$scope.details = [];
+		$scope.showDetailSection = false;
+		$scope.addNewDetail = function(){
+			$scope.showDetailSection= true;
+			$scope.details.push($scope.detail);
+			$scope.detail = {};
+		}
+		$scope.loadDetailsSection = function(){
+			$scope.showDetailSection= true;
+		}
 
 	
 	

@@ -27,6 +27,10 @@ import com.malison.common.model.BaseEntity;
 	@NamedQuery(
 			name ="Invoice.findall",
 			query = "from Invoice i WHERE DELETED=0"
+			),
+	@NamedQuery(
+			name = "Invoice.getByInvoiceNumber",
+			query = "from Invoice i where NUMBER= :invoiceNumber"
 			)
 })
 

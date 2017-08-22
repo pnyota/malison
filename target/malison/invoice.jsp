@@ -169,13 +169,13 @@
     <div ng-show="showAddJobs">
     <section class="content-header">
       <h1>
-        Uninvoiced Job Table
+        Invoice Particulars
       </h1>
       <button class="btn btn-primary" ng-click="updatejob()">update</button>
     </section>
 
     <!-- Main content -->
-    <section class="content">
+    <section class="content" ng-if="!showDetailSection">
       <div class="row">
         <div class="col-xs-12">
           <div class="box">
@@ -253,7 +253,7 @@
               </tbody>              
              </table>
              <p ng-if = "results.length= 0"><b>No {{currency}} Jobs.</b></p>
-             <button class="btn btn-success" value= "save" ng-click="createInvoice()"> Create Invoice</button>
+             <button class="btn btn-success pull-left" value= "Extra Invoice details" ng-click="loadDetailsSection()"> Next</button>
              </div>
             <!-- /.box-body -->
           </div>
@@ -271,6 +271,56 @@
       </div>
       <!-- /.row -->
     </section>
+    
+    <!-- invoice details section -->
+    
+    
+     <section class="content" ng-if="showDetailSection">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box">
+            <div class="box-body">
+             <form>
+             <p><b>Please note input the amount in the currency picked that is ({{currency}})</b></p>
+             	<input type='text' style="width: 697px; " placeholder= "Particular" ng-model="detail.particular">
+             	<input trupe='text' placeholder= "Amount" ng-model="detail.amount">
+             </form>
+              
+             <button class="btn btn-success pull-left" value= "Extra Invoice details" ng-click="addNewDetail()"> Add Details </button>
+
+             </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box">
+          	<div class="box-header">
+          	<h3>Details to Add</h3>
+          	 <button class="btn btn-success pull-right" value= "save" ng-click="createInvoice()"> Done! Create Invoice</button>
+          	</div>
+            <div class="box-body">
+             <table class="table table-bordered table-striped">
+             	<tr> <th style="width: 697px;">Particular</th> <th>Amount </th> </tr>
+             	<tr ng-repeat="det in details">
+             	<td style="width: 697px;"> {{det.particular}}</td>
+             	<td>{{det.amount}}
+             	</tr>
+             </table>
+             </div>
+            <!-- /.box-body -->
+          </div>
+          <!-- /.box -->
+        </div>
+        <!-- /.col -->
+      </div>
+    </section>
+    
+    
     </div>
     <!-- /.content -->
   </div>

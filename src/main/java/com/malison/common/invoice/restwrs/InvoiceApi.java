@@ -23,6 +23,7 @@ import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
 
 import com.itextpdf.text.DocumentException;
+import com.malison.common.invoice.details.InvoiceDetails;
 import com.malison.common.invoice.model.InvWrapper;
 import com.malison.common.invoice.model.Invoice;
 import com.malison.common.invpdf.InvPdf;
@@ -133,9 +134,10 @@ public class InvoiceApi {
 		Invoice inv = em.find(Invoice.class, Long.parseLong(String.valueOf(selected.get(0))));
 		String invno = inv.getInvoiceNumber();
 		List<Job> jobs = em.createNamedQuery("Job.byInvoiceNo").setParameter("invno", invno).getResultList();
-		
+		List<InvoiceDetails> invoiceDetails = em.createNamedQuery("Details.getbyInvoice")
+				.setParameter("invoiceNo", invno).getResultList();
 			HttpSession session = request.getSession(false);
-			File file = InvPdf.generatepdf(session, jobs, inv);
+			File file = InvPdf.generatepdf(session, jobs, inv, invoiceDetails);
 		
 		//ResponseBuilder response = Response.ok((Object)x);
 		return Response.status(200).entity(file).build();
