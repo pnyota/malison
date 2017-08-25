@@ -63,8 +63,8 @@ invoice.controller ('InvoiceCtrl',['$scope','$http', '$window', function($scope,
 	
 	$scope.createInvoice =function(){
 		//mergeInvoice();
-		if(true/*$scope.selectedjobs.length != 0 && $scope.company.length != 0 && $scope.currency.length != 0*/){
-		$scope.invoice = {company:$scope.company, currency:$scope.currency, selectedjobs:$scope.selectedjobs, biller:$scope.biller, tax:$scope.tax, details: $scope.details}
+		if($scope.selectedjobs.length != 0 && $scope.company.length != 0 && $scope.currency.length != 0){
+		$scope.invoice = {company:$scope.company, currency:$scope.currency, selectedjobs:$scope.selectedjobs, biller:$scope.biller, tax:$scope.tax, details: angular.toJson($scope.details)}
 		console.log($scope.invoice)
 		$http({
 			url: './api/jobapi/createinvoice',

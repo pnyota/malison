@@ -4,6 +4,7 @@ package com.malison.common.job.restws;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -117,6 +118,7 @@ public class JobApi {
 	@Produces ("application/pdf")
 	public Response acceptSelected(@Context HttpServletRequest request ,JSONObject selected) {
 		EntityManager em = emf.createEntityManager();
+		System.out.print(selected.toJSONString() + "jkhkjhkjhoiy");
 		List<Job> job = new ArrayList<Job> ();
 		List<Long> jobs = new ArrayList<Long> ();
 		List<InvoiceDetails> invoiceDetails = new ArrayList<> ();
@@ -127,8 +129,17 @@ public class JobApi {
 		String currency = String.valueOf(selected.get("currency"));
 		String tax = String.valueOf(selected.get("tax"));
 		String biller = String.valueOf(selected.get("biller"));
-		@SuppressWarnings("unchecked")
-		List<JSONObject> details  = (ArrayList<JSONObject>) selected.get("details");
+		System.out.println(selected.get("details"));
+		JSONArray details;
+		try{
+			details  = (JSONArray) new JSONParser().parse((String)selected.get("details"));
+		}catch(Exception e){
+			e.printStackTrace();
+			em.close();
+			return Response.status(500).entity("{\"success\":false, \"msg\":\"Failed parsing array\"}").build();
+
+		}
+		
 		
 		HttpSession session = request.getSession(false);
 		try{
@@ -141,7 +152,7 @@ public class JobApi {
 				
 			}
 			for(int i = 0; i < details.size(); i++ ){
-				JSONObject detail = details.get(i);
+				JSONObject detail = (JSONObject) details.get(i) ;
 				String particular = String.valueOf(detail.get("particular"));
 				BigDecimal amount = new BigDecimal(String.valueOf(detail.get("amount")));
 				InvoiceDetails invoiceDetail = new InvoiceDetails();
@@ -170,11 +181,13 @@ public class JobApi {
 			ResponseBuilder response = Response.ok((Object) file);
 			response.header("Content-Disposition",
 					"attachment; filename=invoice.pdf");
+			em.close();
 			return response.build();
 			
 		}
 		catch (Exception e){
 			e.printStackTrace();
+			em.close();
 			return Response.status(500).entity("{\"success\":false, \"msg\":\"Error occured, please  try later\"}").build();
 		}
 		
@@ -184,7 +197,7 @@ public class JobApi {
 	private void persistDetails(List<InvoiceDetails> invoiceDetails, Invoice invoice, EntityManager em) {
 		System.out.println("hapa Tunaanza kupersist details");
 		Invoice completeInvoice =(Invoice) em.createNamedQuery("Invoice.getByInvoiceNumber")
-				.setParameter("InvoiceNumber", invoice.getInvoiceNumber())
+				.setParameter("invoiceNumber", invoice.getInvoiceNumber())
 				.getSingleResult();
 		for (InvoiceDetails invoiceDetail: invoiceDetails ){
 			invoiceDetail.setInvoice(completeInvoice);
@@ -206,7 +219,7 @@ public class JobApi {
 		List<Job> job = em.createNamedQuery("Job.findall").getResultList();
 		JobWrapper wrapper = new JobWrapper();
 		wrapper.setJob(job);
-		
+		em.close();
 		return Response.status(200).entity(wrapper).build();
 		
 	}

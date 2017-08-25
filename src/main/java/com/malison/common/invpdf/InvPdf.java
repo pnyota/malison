@@ -192,14 +192,6 @@ public class InvPdf {
 		       total = total.add(job.getAmount());
 		        	
 		        }
-		        for (InvoiceDetails invoiceDetail: invoiceDetails){
-		        	PdfPCell invoiceDetailCell = new PdfPCell();
-		        	invoiceDetailCell.setColspan(8);
-		        	invoiceDetailCell.addElement(new Phrase(invoiceDetail.getParticular()));
-		        	table.addCell(invoiceDetailCell);
-		        	table.addCell(String.valueOf(df.format(invoiceDetail.getAmount())));
-		        	total = total.add(invoiceDetail.getAmount());
-		        }
 
 
 				boolean b = false;
@@ -210,6 +202,30 @@ public class InvPdf {
 				  b = !b;
 				}
 		        document.add(table);
+		        
+		        PdfPTable extrasTable = new PdfPTable(2);
+		        extrasTable.setWidthPercentage(90);
+		        extrasTable.getDefaultCell().setBorder(Rectangle.NO_BORDER);
+		        float[] extrasWidth = {89f, 11f};
+		        extrasTable.setWidths(extrasWidth);
+		        
+		        for (InvoiceDetails invoiceDetail: invoiceDetails){
+		        	PdfPCell invoiceDetailCell = new PdfPCell();
+		        	invoiceDetailCell.setBorder(Rectangle.NO_BORDER);
+		        	invoiceDetailCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		        	invoiceDetailCell.addElement(new Phrase(invoiceDetail.getParticular(), bold));
+		        	extrasTable.addCell(invoiceDetailCell);
+		        	extrasTable.addCell(String.valueOf(df.format(invoiceDetail.getAmount())));
+		        	total = total.add(invoiceDetail.getAmount());
+		        }
+		        boolean d = b;
+				for(PdfPRow t: extrasTable.getRows()) {
+				  for(PdfPCell c: t.getCells()) {
+				    c.setBackgroundColor(d ? new BaseColor(195,201,201) : BaseColor.WHITE);
+				  }
+				  d = !d;
+				}
+		        document.add(extrasTable);
 		        
 		        double sum = total.doubleValue();
 		        float[] colwidths = {80f,20f};
@@ -223,7 +239,7 @@ public class InvPdf {
 		        	PdfPCell vatcell= new PdfPCell(new Phrase("+16% VAT: "));
 		        	vatcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 			        vatcell.setBorder(Rectangle.NO_BORDER);
-			        PdfPCell vatamount= new PdfPCell(new Phrase(invoice.getCurrency() + String.valueOf(df.format(total.subtract(withoutTax)))));
+			        PdfPCell vatamount= new PdfPCell(new Phrase(invoice.getCurrency() + " " + String.valueOf(df.format(total.subtract(withoutTax)))));
 			        vatamount.setBorder(Rectangle.NO_BORDER);
 			        totalAmount.addCell(vatcell);
 			        totalAmount.addCell(vatamount);
@@ -233,7 +249,7 @@ public class InvPdf {
 			    totalcell.setHorizontalAlignment(Element.ALIGN_RIGHT);
 			    totalcell.setBorder(Rectangle.NO_BORDER);
 			    totalAmount.addCell(totalcell);
-			    PdfPCell amount= new PdfPCell(new Phrase(invoice.getCurrency() + String.valueOf(df.format(total)),fortotal));
+			    PdfPCell amount= new PdfPCell(new Phrase(invoice.getCurrency() + " " +String.valueOf(df.format(total)),fortotal));
 			    amount.setBorder(Rectangle.NO_BORDER);
 		        
 		        totalAmount.addCell(amount);

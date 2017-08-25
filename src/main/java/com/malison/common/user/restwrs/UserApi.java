@@ -50,9 +50,10 @@ public class UserApi {
 		catch (Exception e){
 			e.printStackTrace();
 			em.getTransaction().rollback();
-			
+			em.close();
 			return "{\"success\":false, \"msg\":\"Error occured, please  try later\"}";
 		}
+		em.close();
 		return "{\"success\":true, \"msg\": \"Saved successfully\"}";
 	}
 	
@@ -87,7 +88,7 @@ public class UserApi {
 		
 		EntityManager em = emf.createEntityManager();
 		List<String> usernames = em.createNamedQuery("User.getUsernames").getResultList();
-		
+		em.close();
 		return Response.status(200).entity(usernames).build();		
 	}
 	
@@ -119,6 +120,7 @@ public class UserApi {
 		session.setAttribute("username", username);
 		session.setAttribute("name", name);
 		session.setAttribute("position", position);
+		em.close();
 		}
 	
 /*	@GET

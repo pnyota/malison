@@ -69,7 +69,7 @@ public class InvoiceApi {
 		
 		JobWrapper wrapper = new JobWrapper();
 		wrapper.setJob(jobs);
-		
+		em.close();
 		return Response.status(200).entity(wrapper).build();
 	}
 
@@ -84,7 +84,7 @@ public class InvoiceApi {
 		Long id = Long.parseLong(String.valueOf(y));
 		Invoice invoice = em.find(Invoice.class,  id);
 		
-		
+		em.close();
 		return Response.status(200).entity(invoice).build();
 	}
 	
@@ -117,9 +117,10 @@ public class InvoiceApi {
 		catch (Exception e){
 			e.printStackTrace();
 			em.getTransaction().rollback();
+			em.close();
 			return "{\"success\":false, \"msg\":\"Error occured, please  try later\"}";
 		}
-		
+		em.close();
 		return "{\"success\":true, \"msg\": \"Saved successfully\"}";
 	}
 	
@@ -140,6 +141,7 @@ public class InvoiceApi {
 			File file = InvPdf.generatepdf(session, jobs, inv, invoiceDetails);
 		
 		//ResponseBuilder response = Response.ok((Object)x);
+			em.close();
 		return Response.status(200).entity(file).build();
 	}
 	
